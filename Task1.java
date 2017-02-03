@@ -2,11 +2,16 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.*;
 import st.EntryMap;
 import st.TemplateEngine;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -14,12 +19,30 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by nlfox on 2/2/17.
  */
+@RunWith(Parameterized.class)
 public class Task1 {
     EntryMap map;
     TemplateEngine engine;
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
+
+    @Parameters(name = "{index}: {0},{1})")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {true, "delete-unmatched"},
+                {false, "delete-unmatched"},
+                {true, "keep-unmatched"},
+                {false, "keep-unmatched"}
+        });
+    }
+
+    @Parameter // first data value (0) is default
+    public /* NOT private */ boolean pCase;
+
+    @Parameter(1)
+    public /* NOT private */ String pMode;
+
 
     @Before
     public void setUp() throws Exception {
@@ -32,14 +55,14 @@ public class Task1 {
     @Test
     public void testEntryMapSpec1() {
         exception.expect(RuntimeException.class);
-        map.store(null, "a", true);
+        map.store(null, "a", pCase);
     }
 
     //spec2 - Replace value string cannot be NULL. A runtime exception is thrown otherwise.
     @Test
     public void testEntryMapSpec2() {
         exception.expect(RuntimeException.class);
-        map.store("test", null, true);
+        map.store("test", null, pCase);
     }
 
 
@@ -58,11 +81,11 @@ public class Task1 {
     //    ---> In the previous example the "name"/"Adam" entry is the first entry since it was stored first.
     @Test
     public void testEntryMapSpec4() {
-        map.store("surname", "Dykes", false);
+        map.store("name", "Aaa", false);
         map.store("name", "Adam", false);
-        map.store("age", "29", false);
-
+        assertEquals(engine.evaluate("${name},${name}", map, pMode), "Aaa,Aaa");
     }
+
 
 //    spec5 - Entries that already exist cannot be stored again.
 //            ---> In the following commands only the first entry will be saved:
@@ -74,29 +97,29 @@ public class Task1 {
 
     @Test
     public void testEntryMapSpec5() {
-
+        map.store("name", "Adam", false);
+        map.store("name", "Adam", true);
+        assertEquals(engine.evaluate("${Name},${name}", map, "delete-unmatched"), "Adam,Adam");
+        map.store("name1", "Bob", false);
+        map.store("name1", "Bob", false);
+        assertEquals(engine.evaluate("${name1},${name1}", map, "delete-unmatched"), "Bob,Bob");
     }
-
-    private String[] tOps = new String[]{"keep-unmatched", "delete-unmatched"};
 
     //spec1 - The template string can be NULL or empty. If template string NULL or empty, then the unchanged template string is returned.
     @Test
     public void testTemplateEngineSpec1() {
-        for (String op : tOps) {
-            assertEquals("", engine.evaluate("", map, op));
-            assertEquals(null, engine.evaluate(null, map, op));
-        }
+        assertEquals("", engine.evaluate("", map, pMode));
+        assertEquals(null, engine.evaluate(null, map, pMode));
+
     }
 
     //spec2 - The EntryMap object can be NULL. If EntryMap object NULL, then the unchanged template string is returned.
     @Test
     public void testTemplateEngineSpec2() {
-        for (String op : tOps) {
-            assertEquals("", engine.evaluate("", null, op));
-            assertEquals("test2333", engine.evaluate("test2333", map, op));
-        }
-    }
+        assertEquals("", engine.evaluate("", null, pMode));
+        assertEquals("test2333", engine.evaluate("test2333", map, pMode));
 
+    }
 
 
 }
