@@ -67,7 +67,6 @@ public class Task1 {
 
 
     //spec3 - Case sensitive flag is optional and can be NULL. In the case of NULL case sensitive flag, template matching will be case insensitive.
-    // TODO: How do we deal with the situation when the program throws Exception doesn't meet the spec?
     @Test
     public void testEntryMapSpec3() {
         map.store("name", "Adam", null);
@@ -97,17 +96,20 @@ public class Task1 {
 
     @Test
     public void testEntryMapSpec5() {
-        map.store("name", "Adam", false);
+        map.store("name", "Adam",false);
         map.store("name", "Adam", true);
         assertEquals(engine.evaluate("${Name},${name}", map, "delete-unmatched"), "Adam,Adam");
         map.store("name1", "Bob", false);
         map.store("name1", "Bob", false);
-        assertEquals(engine.evaluate("${name1},${name1}", map, "delete-unmatched"), "Bob,Bob");
+        assertEquals(engine.evaluate("${name1},${Name1}", map, "delete-unmatched"), "Bob,Bob");
     }
 
     //spec1 - The template string can be NULL or empty. If template string NULL or empty, then the unchanged template string is returned.
     @Test
     public void testTemplateEngineSpec1() {
+        assertEquals("", engine.evaluate("", map, pMode));
+        assertEquals(null, engine.evaluate(null, map, pMode));
+        map.store("tets","test",pCase);
         assertEquals("", engine.evaluate("", map, pMode));
         assertEquals(null, engine.evaluate(null, map, pMode));
 
@@ -124,9 +126,9 @@ public class Task1 {
     //spec3 - Matching mode cannot be NULL and must be one of the possible values ("keep-unmatched" and "delete-unmatched").
     //If matching mode NULL or other value, it defaults to "delete-unmatched".
     @Test
-    public void testTemplateEngineSpec3(){
-        map.store("name","Adam",false);
-        assertEquals("Adam",engine.evaluate("${hello}${name}",map,null));
+    public void testTemplateEngineSpec3() {
+        map.store("name", "Adam", false);
+        assertEquals("Adam", engine.evaluate("${hello}${name}", map, null));
     }
 
     //spec4 - Templates in a template string occur between "${" and "}".
@@ -139,11 +141,11 @@ public class Task1 {
 //            2 - "item"
 //            (i.e. the template boundaries are omitted)
     @Test
-    public void testTemplateEngineSpec4(){
-        map.store("⁄€‹›ﬁﬂ‡°","˝ÓÔÒ",true);
-        assertEquals("${⁄€‹›ﬁﬂ‡°",engine.evaluate("${⁄€‹›ﬁﬂ‡°",map,pMode));
-        assertEquals("⁄€‹›ﬁﬂ‡°}",engine.evaluate("⁄€‹›ﬁﬂ‡°}",map,pMode));
-        assertEquals("˝ÓÔÒ",engine.evaluate("${⁄€‹›ﬁﬂ‡°}",map,pMode));
+    public void testTemplateEngineSpec4() {
+        map.store("⁄€‹›ﬁﬂ‡°", "˝ÓÔÒ", pCase);
+        assertEquals("${⁄€‹›ﬁﬂ‡°", engine.evaluate("${⁄€‹›ﬁﬂ‡°", map, pMode));
+        assertEquals("⁄€‹›ﬁﬂ‡°}", engine.evaluate("⁄€‹›ﬁﬂ‡°}", map, pMode));
+        assertEquals("˝ÓÔÒ", engine.evaluate("${⁄€‹›ﬁﬂ‡°}", map, pMode));
 
     }
 
@@ -153,9 +155,9 @@ public class Task1 {
 //                2 - ${middlename}
 //                3 - ${middle       name}
     @Test
-    public void testTemplateEngineSpec5(){
-        map.store("my life","x",false);
-        assertEquals("x",engine.evaluate("${my\t \b\n\r\flife}",map,pMode));
+    public void testTemplateEngineSpec5() {
+        map.store("my life", "x", pCase);
+        assertEquals("x", engine.evaluate("${my\t \b\n\r\flife}", map, pMode));
     }
     //spec6 - In a template string every "${" and "}" occurrence acts as a boundary of at MOST one template.
 //            ---> Processing from left-to-right, each "}" occurrence that is not already a boundary to a template is matched to its closest preceding "${" occurrence which also is not already a boundary to a template.
@@ -164,16 +166,52 @@ public class Task1 {
 //                2 - ${competition}
 //                3 - ${we should try or best for winning the ${competition} cup.}
 
-//    spec7 - In a template string the different templates are ordered according to their length. The shorter templates precede.
+    @Test
+    public void testTemplateEngineSpec6() {
+        map.store("firstname", "Adam", pCase);
+        map.store("prefix", "first", pCase);
+        assertEquals("}Adam", engine.evaluate("}${${prefix}name}", map, pMode));
+    }
+
+    //    spec7 - In a template string the different templates are ordered according to their length. The shorter templates precede.
 //            ---> In the case of same-length templates, the one that occurs first when traversing the template string from left-to-right precedes.
 //            ---> In the template string "abc}${de}${fgijk${lm}nopqr}${s}uvw${xyz" the sorted templates are:
 //            1 - ${s}
 //                2 - ${de}
 //                3 - ${lm}
 //                4 - ${fgijk${lm}nopqr}
+    @Test
+    public void testTemplateEngineSpec7() {
+        map.store("${aaa}", "test",  pCase);
+        /* Consider the situation, if we use ${aaa} as an entry and eval ${${aaa}}
+        we have two template
+        1. ${${aaa}}    -> ${aaa}
+        2. ${aaa}       -> aaa
+
+        if the template string is not order by the length, then in the delete-unmatched mode
+        will not first delete the unmatched one while in the other the "${${aaa}}" will be
+        replaced by "test"
+        */
+
+        if (pMode.equals("delete-unmatched")){
+            assertEquals("",engine.evaluate("${${aaa}}",map,pMode));
+        }else {
+            assertEquals("test",engine.evaluate("${${aaa}}",map,pMode));
+        }
+
+        // now we add "aaa", things changed, aaa get first evaluated.
+        map.store("aaa","aaa",pCase);
+
+        if (pMode.equals("delete-unmatched")){
+            assertEquals("aaa",engine.evaluate("${${aaa}}",map,pMode));
+        }else {
+            assertEquals("aaa",engine.evaluate("${${aaa}}",map,pMode));
+        }
 
 
-//    spec8 - The engine processes one template at a time and attempts to match it against the keys of the EntryMap entries until there is a match or the entry list is exhausted.
+    }
+
+    //    spec8 - The engine processes one template at a time and attempts to match it against the keys of the EntryMap entries until there is a match or the entry list is exhausted.
 //            ---> The engine processes both templates and entries according to their order.
 //            ---> If there is a match:
 //            1 - The template (including its boundaries) in the template string is replaced by the value of the matched entry.
@@ -183,16 +221,16 @@ public class Task1 {
 //            1 - The template engine just moves on to the next template if matching the mode is "keep-unmatched".
 //            2 - The engine deletes the unmatched template from the template string and all other templates which include it.
     @Test
-    public void testTemplateEngineSpec8_step2(){
+    public void testTemplateEngineSpec8_step2() {
         EntryMap map = new EntryMap();
         TemplateEngine engine = new TemplateEngine();
 
         map.store("name", "Adam", false);
         map.store("surname", "Dykes", false);
         map.store("age ${y}", "29", false);
-        map.store("y","24",false);
+        map.store("y", "24", false);
 
-        assertEquals("Hello Adam, is your age 29 24",engine.evaluate("Hello ${name}, is your age ${age 24 ${symbol}}", map,"delete-unmatched"));
+        assertEquals("Hello Adam, is your age 29 24", engine.evaluate("Hello ${name}, is your age ${age 24 ${symbol}}", map, "delete-unmatched"));
     }
 
 }
