@@ -94,7 +94,7 @@ public class Task1 {
 
     @Test
     public void testEntryMapSpec5() {
-        map.store("name", "Adam",false);
+        map.store("name", "Adam", false);
         map.store("name", "Adam", true);
         assertEquals(engine.evaluate("${Name},${name}", map, "delete-unmatched"), "Adam,Adam");
         map.store("name1", "Bob", false);
@@ -107,7 +107,7 @@ public class Task1 {
     public void testTemplateEngineSpec1() {
         assertEquals("", engine.evaluate("", map, pMode));
         assertEquals(null, engine.evaluate(null, map, pMode));
-        map.store("tets","test",pCase);
+        map.store("tets", "test", pCase);
         assertEquals("", engine.evaluate("", map, pMode));
         assertEquals(null, engine.evaluate(null, map, pMode));
 
@@ -128,15 +128,16 @@ public class Task1 {
         map.store("name", "Adam", pCase);
         assertEquals("Adam", engine.evaluate("${hello}${name}", map, null));
     }
+
     @Test
-    public void testTemplateEngineSpec3_2(){
+    public void testTemplateEngineSpec3_2() {
         map.store("name", "Adam", pCase);
-        if(pCase==false){
-            assertEquals("Adam", engine.evaluate("${NaMe}",map, pMode));
-        }else if(pMode.equals("keep-unmatched")){
-            assertEquals("${NaMe}", engine.evaluate("${NaMe}",map, pMode));
-        }else{
-            assertEquals("", engine.evaluate("${NaMe}",map, pMode));
+        if (pCase == false) {
+            assertEquals("Adam", engine.evaluate("${NaMe}", map, pMode));
+        } else if (pMode.equals("keep-unmatched")) {
+            assertEquals("${NaMe}", engine.evaluate("${NaMe}", map, pMode));
+        } else {
+            assertEquals("", engine.evaluate("${NaMe}", map, pMode));
         }
     }
 
@@ -168,8 +169,9 @@ public class Task1 {
         map.store("my life", "x", pCase);
         assertEquals("x", engine.evaluate("${my\t \nlife}", map, pMode));
     }
+
     @Test
-    public void testTemplateEngineSpec5_2(){
+    public void testTemplateEngineSpec5_2() {
         map.store("my life", "x", pCase);
         assertEquals("x", engine.evaluate("${ my life }", map, pMode));
     }
@@ -196,7 +198,7 @@ public class Task1 {
 //                4 - ${fgijk${lm}nopqr}
     @Test
     public void testTemplateEngineSpec7() {
-        map.store("${aaa}", "test",  pCase);
+        map.store("${aaa}", "test", pCase);
         /* Consider the situation, if we use ${aaa} as an entry and eval ${${aaa}}
         we have two template
         1. ${${aaa}}    -> ${aaa}
@@ -207,19 +209,19 @@ public class Task1 {
         replaced by "test"
         */
 
-        if (pMode.equals("delete-unmatched")){
-            assertEquals("",engine.evaluate("${${aaa}}",map,pMode));
-        }else {
-            assertEquals("test",engine.evaluate("${${aaa}}",map,pMode));
+        if (pMode.equals("delete-unmatched")) {
+            assertEquals("", engine.evaluate("${${aaa}}", map, pMode));
+        } else {
+            assertEquals("test", engine.evaluate("${${aaa}}", map, pMode));
         }
 
         // now we add "aaa", things changed, aaa get first evaluated.
-        map.store("aaa","aaa",pCase);
+        map.store("aaa", "aaa", pCase);
 
-        if (pMode.equals("delete-unmatched")){
-            assertEquals("aaa",engine.evaluate("${${aaa}}",map,pMode));
-        }else {
-            assertEquals("aaa",engine.evaluate("${${aaa}}",map,pMode));
+        if (pMode.equals("delete-unmatched")) {
+            assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
+        } else {
+            assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
         }
 
 
@@ -236,21 +238,23 @@ public class Task1 {
 //            1 - The template engine just moves on to the next template if matching the mode is "keep-unmatched".
 //            2 - The engine deletes the unmatched template from the template string and all other templates which include it.
     @Test
-    public void testTemplateEngineSpec8_basic(){
-        map.store("a","a",pCase);
+    public void testTemplateEngineSpec8_basic() {
+        map.store("a", "a", pCase);
         //Case 1: there is a match
-        assertEquals("aaa",engine.evaluate("${a}${${a}}${${${a}}}",map,pMode));
+        assertEquals("aaa", engine.evaluate("${a}${${a}}${${${a}}}", map, pMode));
     }
+
     @Test
-    public void testTemplateEngineSpec8_exhausted(){
+    public void testTemplateEngineSpec8_exhausted() {
         //Case 2: the entry list is exhausted (ie. no match)
-        map.store("a","b",pCase);
-        if(pMode.equals("delete-unmatched")){
-            assertEquals("",engine.evaluate("${x}",map,pMode));
-        }else{
-            assertEquals("${x}",engine.evaluate("${x}",map,pMode));
+        map.store("a", "b", pCase);
+        if (pMode.equals("delete-unmatched")) {
+            assertEquals("", engine.evaluate("${x}", map, pMode));
+        } else {
+            assertEquals("${x}", engine.evaluate("${x}", map, pMode));
         }
     }
+
     @Test
     public void testTemplateEngineSpec8_step2() {
 
@@ -276,6 +280,23 @@ public class Task1 {
         //   so template3 is deleted from the instanced string and all other templates containing it.
         //      --> Instanced string is now: "Hello Adam24, is your age "
         assertEquals("Hello Adam24, is your age ", engine.evaluate("Hello Adam${y}, is your age ${age 24 ${symbol}}", map, "delete-unmatched"));
+    }
+
+    @Test
+    public void additionalTest1() {
+        assertEquals("test2333${x}", engine.evaluate("test2333${x}", null, pMode));
+    }
+
+    @Test
+    public void additionalTest2(){
+        exception.expect(RuntimeException.class);
+        map.store("","s",pCase);
+        //assertEquals("test2333${x}", engine.evaluate("test2333${x}", map, pMode));
+    }
+
+    @Test
+    public void additionalTest3(){
+        assertEquals("test2333${x}", engine.evaluate("test2333${x}", map, "test"));
     }
 
 }
