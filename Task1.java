@@ -282,21 +282,5 @@ public class Task1 {
         assertEquals("Hello Adam24, is your age ", engine.evaluate("Hello Adam${y}, is your age ${age 24 ${symbol}}", map, "delete-unmatched"));
     }
 
-    @Test
-    public void additionalTest1() {
-        assertEquals("test2333${x}", engine.evaluate("test2333${x}", null, pMode));
-    }
-
-    @Test
-    public void additionalTest2(){
-        exception.expect(RuntimeException.class);
-        map.store("","s",pCase);
-        //assertEquals("test2333${x}", engine.evaluate("test2333${x}", map, pMode));
-    }
-
-    @Test
-    public void additionalTest3(){
-        assertEquals("test2333${x}", engine.evaluate("test2333${x}", map, "test"));
-    }
 
 }
