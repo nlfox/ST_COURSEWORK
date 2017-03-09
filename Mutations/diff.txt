@@ -1,0 +1,153 @@
+diff d_0/st/EntryMap.java d_0/st/EntryMap.java
+diff d_0/st/TemplateEngine.java d_0/st/TemplateEngine.java
+diff d_0/st/a.java d_0/st/a.java
+diff d_0/st/b.java d_0/st/b.java
+diff d_0/st/c.java d_0/st/c.java
+diff d_1/st/EntryMap.java d_0/st/EntryMap.java
+diff d_1/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+59a62
+>         localObject3 = Boolean.FALSE;
+diff d_1/st/a.java d_0/st/a.java
+diff d_1/st/b.java d_0/st/b.java
+diff d_1/st/c.java d_0/st/c.java
+diff d_2/st/EntryMap.java d_0/st/EntryMap.java
+diff d_2/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+49c51
+<             localObject3 = new c((TemplateEngine)localObject1, (Integer)localObject3, Integer.valueOf(localInteger.intValue() + 1), "");
+---
+>             localObject3 = new c((TemplateEngine)localObject1, (Integer)localObject3, localInteger, "");
+diff d_2/st/a.java d_0/st/a.java
+diff d_2/st/b.java d_0/st/b.java
+diff d_2/st/c.java d_0/st/c.java
+diff d_3/st/EntryMap.java d_0/st/EntryMap.java
+diff d_3/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+142c144
+<       localObject1 = "b";
+---
+>       localObject1 = "";
+diff d_3/st/a.java d_0/st/a.java
+diff d_3/st/b.java d_0/st/b.java
+diff d_3/st/c.java d_0/st/c.java
+diff d_4/st/EntryMap.java d_0/st/EntryMap.java
+diff d_4/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+diff d_4/st/a.java d_0/st/a.java
+37c37
+<       return !c.equals(c);
+---
+>       return c.equals(c);
+47,48c47,51
+<     int j;
+<     return j = i * 31 + b.hashCode();
+---
+>     int j = i * 31 + b.hashCode();
+>     a locala3 = this;
+>     locala3 = this;
+>     int k;
+>     return k = j * 31 + (c != null ? c.hashCode() : 0);
+diff d_4/st/b.java d_0/st/b.java
+diff d_4/st/c.java d_0/st/c.java
+diff d_5/st/EntryMap.java d_0/st/EntryMap.java
+diff d_5/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+120c122
+<         if ((c.booleanValue() ? Boolean.valueOf(((String)localObject1).equals(localObject2)) : Boolean.valueOf(((String)localObject1).toLowerCase().equals(localObject2))).booleanValue())
+---
+>         if ((c.booleanValue() ? Boolean.valueOf(((String)localObject1).equals(localObject2)) : Boolean.valueOf(((String)localObject1).toLowerCase().equals(((String)localObject2).toLowerCase()))).booleanValue())
+diff d_5/st/a.java d_0/st/a.java
+diff d_5/st/b.java d_0/st/b.java
+diff d_5/st/c.java d_0/st/c.java
+diff d_6/st/EntryMap.java d_0/st/EntryMap.java
+diff d_6/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+120c122
+<         if ((c.booleanValue() ? Boolean.valueOf(((String)localObject1).toLowerCase().equals(localObject2)) : Boolean.valueOf(((String)localObject1).toLowerCase().equals(((String)localObject2).toLowerCase()))).booleanValue())
+---
+>         if ((c.booleanValue() ? Boolean.valueOf(((String)localObject1).equals(localObject2)) : Boolean.valueOf(((String)localObject1).toLowerCase().equals(((String)localObject2).toLowerCase()))).booleanValue())
+diff d_6/st/a.java d_0/st/a.java
+diff d_6/st/b.java d_0/st/b.java
+diff d_6/st/c.java d_0/st/c.java
+diff d_7/st/EntryMap.java d_0/st/EntryMap.java
+diff d_7/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+160c162
+<         localObject2 = paramString1.substring(geta.intValue() + 1, getb.intValue() - 1);
+---
+>         localObject2 = paramString1.substring(geta.intValue() + 1, getb.intValue());
+diff d_7/st/a.java d_0/st/a.java
+diff d_7/st/b.java d_0/st/b.java
+diff d_7/st/c.java d_0/st/c.java
+diff d_8/st/EntryMap.java d_0/st/EntryMap.java
+diff d_8/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+162d163
+<         paramString2++;
+diff d_8/st/a.java d_0/st/a.java
+diff d_8/st/b.java d_0/st/b.java
+diff d_8/st/c.java d_0/st/c.java
+diff d_9/st/EntryMap.java d_0/st/EntryMap.java
+diff d_9/st/TemplateEngine.java d_0/st/TemplateEngine.java
+38c38,39
+<         if (((Boolean)localObject3).booleanValue()) {
+---
+>         if (((Boolean)localObject3).booleanValue())
+>         {
+39a41
+>           localInteger = Integer.valueOf(localInteger.intValue() + 1);
+131,132d132
+<       } else {
+<         localInteger2 = Integer.valueOf(localInteger2.intValue() + 1);
+diff d_9/st/a.java d_0/st/a.java
+diff d_9/st/b.java d_0/st/b.java
+diff d_9/st/c.java d_0/st/c.java
