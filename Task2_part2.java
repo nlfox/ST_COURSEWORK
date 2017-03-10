@@ -104,6 +104,17 @@ public class Task2_part2 {
         map.store("x", "y", pCase);
         assertEquals("y",engine.evaluate("${x}",map,pMode));
     }
+
+    @Test
+    public void m_0() {
+        map.store("firstname", "Adam", pCase);
+        map.store("prefix", "first", pCase);
+        assertEquals("}Adam", engine.evaluate("}${${prefix}name}", map, pMode));
+    }
+
+
+
+
     @Test
     public void jmak_test1(){
         try{
