@@ -25,7 +25,7 @@ public class Task22 {
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
-    @Parameterized.Parameters(name = "{index}: {0},{1})")
+    @Parameters(name = "{index}: {0},{1})")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {true, "delete-unmatched"},
@@ -35,10 +35,10 @@ public class Task22 {
         });
     }
 
-    @Parameterized.Parameter // first data value (0) is default
+    @Parameter // first data value (0) is default
     public /* NOT private */ boolean pCase;
 
-    @Parameterized.Parameter(1)
+    @Parameter(1)
     public /* NOT private */ String pMode;
 
 
@@ -48,61 +48,140 @@ public class Task22 {
         engine = new TemplateEngine();
     }
 
-    //    @Test //for m_0
-//    public void testTemplateEngineSpec6() {
-//        map.store("firstname", "Adam", pCase);
-//        map.store("prefix", "first", pCase);
-//        assertEquals("}Adam", engine.evaluate("}${${prefix}name}", map, pMode));
-//    }
-//
-//    @Test //for m_0
-//    public void testTemplateEngineSpec7() {
-//        map.store("${aaa}", "test", pCase);
-//        /* Consider the situation, if we use ${aaa} as an entry and eval ${${aaa}}
-//        we have two template
-//        1. ${${aaa}}    -> ${aaa}
-//        2. ${aaa}       -> aaa
-//
-//        if the template string is not order by the length, then in the delete-unmatched mode
-//        will not first delete the unmatched one while in the other the "${${aaa}}" will be
-//        replaced by "test"
-//        */
-//
-//        if (pMode.equals("delete-unmatched")) {
-//            assertEquals("", engine.evaluate("${${aaa}}", map, pMode));
-//        } else {
-//            assertEquals("test", engine.evaluate("${${aaa}}", map, pMode));
-//        }
-//
-//        // now we add "aaa", things changed, aaa get first evaluated.
-//        map.store("aaa", "aaa", pCase);
-//
-//        if (pMode.equals("delete-unmatched")) {
-//            assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
-//        } else {
-//            assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
-//        }
-//    }
-//    @Test //for m_0
-//    public void additionalTest4(){
-//        assertEquals("test2333", engine.evaluate("test2333${}", map, "delete-unmatched"));
-//    }
-//    @Test //for m_0
-//    public void testTemplateEngineSpec8_basic() {
-//        map.store("a", "a", pCase);
-//        //Case 1: there is a match
-//        assertEquals("aaa", engine.evaluate("${a}${${a}}${${${a}}}", map, pMode));
-//    }
-//    @Test
-//    public void testIdentifyTemplates_3(){
-//    	map.store("x", "y", pCase);
-//    	assertEquals("",engine.evaluate("", map, pMode));
-//    }
+    @Test //for m_0
+    public void testTemplateEngineSpec6() {
+        map.store("firstname", "Adam", pCase);
+        map.store("prefix", "first", pCase);
+        assertEquals("}Adam", engine.evaluate("}${${prefix}name}", map, pMode));
+    }
+
+    @Test //for m_0
+    public void testTemplateEngineSpec7() {
+        map.store("${aaa}", "test", pCase);
+        /* Consider the situation, if we use ${aaa} as an entry and eval ${${aaa}}
+        we have two template
+        1. ${${aaa}}    -> ${aaa}
+        2. ${aaa}       -> aaa
+        if the template string is not order by the length, then in the delete-unmatched mode
+        will not first delete the unmatched one while in the other the "${${aaa}}" will be
+        replaced by "test"
+        */
+
+        if (pMode.equals("delete-unmatched")) {
+            assertEquals("", engine.evaluate("${${aaa}}", map, pMode));
+        } else {
+            assertEquals("test", engine.evaluate("${${aaa}}", map, pMode));
+        }
+
+        // now we add "aaa", things changed, aaa get first evaluated.
+        map.store("aaa", "aaa", pCase);
+
+        if (pMode.equals("delete-unmatched")) {
+            assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
+        } else {
+            assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
+        }
+    }
+
+    @Test //for m_0
+    public void additionalTest4() {
+        assertEquals("test2333", engine.evaluate("test2333${}", map, "delete-unmatched"));
+    }
+
+    @Test //for m_0, m_3
+    public void testTemplateEngineSpec8_basic() {
+        map.store("a", "a", pCase);
+        //Case 1: there is a match
+        assertEquals("aaa", engine.evaluate("${a}${${a}}${${${a}}}", map, pMode));
+    }
+
+    @Test //for m_0
+    public void jmak_identifyTemplates_3() {
+        map.store("length10", "length11", pCase);
+        map.store("length10}", "length104", pCase);
+        map.store("{", "}", pCase);
+        if (pMode.equals("keep-unmatched")) {
+            assertEquals("length11${}", engine.evaluate("${length10}${}", map, pMode));
+        } else {
+            assertEquals("length11", engine.evaluate("${length10}${}", map, pMode));
+        }
+
+    }
+
+    @Test
+    public void testIdentifyTemplates_3() {
+        map.store("x", "y", pCase);
+        assertEquals("", engine.evaluate("", map, pMode));
+    }
+
     @Test
     public void testIdentifyTemplates_1() {
+        //1, 19
         map.store("x", "y", pCase);
         assertEquals("y", engine.evaluate("${x}", map, pMode));
     }
+
+    @Test
+    public void testIdentifyTemplates_2() {
+        map.store("x", "y", pCase);
+        map.store("{y", "z", pCase);
+        map.store("y{", "rip", pCase);
+        map.store("$a", "v", pCase);
+        map.store("a$", "g", pCase);
+        map.store("}a", "e", pCase);
+        map.store("a}", "x", pCase);
+        map.store("a", "b", pCase);
+        assertEquals("$y", engine.evaluate("$${x}", map, pMode));
+        assertEquals("$y$}", engine.evaluate("$${x}$}", map, pMode));
+        assertEquals("v", engine.evaluate("${$a}", map, pMode));
+        assertEquals("g", engine.evaluate("${a$}", map, pMode));
+
+        if (pMode.equals("keep-unmatched")) {
+            assertEquals("${}a}", engine.evaluate("${}a}", map, pMode));
+        } else { //fails for m_2
+            assertEquals("a}", engine.evaluate("${}a}", map, pMode));
+        }
+        assertEquals("b}", engine.evaluate("${a}}", map, pMode));
+        assertEquals("rip", engine.evaluate("${y{}", map, pMode));
+        assertEquals("{{z", engine.evaluate("{{${{y}", map, pMode));
+        assertEquals("{$z", engine.evaluate("{$${{y}", map, pMode));
+        assertEquals("{}z", engine.evaluate("{}${{y}", map, pMode));
+        assertEquals("}$z", engine.evaluate("}$${{y}", map, pMode));
+        assertEquals("}{z", engine.evaluate("}{${{y}", map, pMode));
+    }
+
+    @Test
+    public void jmak_entrymap1() {
+        map.store("AAaAbb", "aaAaBB", pCase);
+        if (pCase == true) {
+            assertEquals("aaAaBBaaAaBB", engine.evaluate("${AAaAbb}${AAaAbb}", map, pMode));
+
+        } else {
+            assertEquals("aaAaBBaaAaBB", engine.evaluate("${aaaabb}${AAAABB}", map, pMode));
+        }
+    }
+
+    @Test
+    public void jmak_entry() {
+        map.store("AAaa", "bbbb", pCase);
+        map.store("AaAa", "BBBB", !pCase);
+        if (pCase == true) {
+            map.store("AAaa", "bbbb", pCase);
+            map.store("AaAa", "BBBB", !pCase);
+            assertEquals("bbbbBBBB", engine.evaluate("${AAaa}${aaaa}", map, pMode));
+        } else {
+            map.store("AAaa", "bbbb", pCase);
+            map.store("AaAa", "BBBB", !pCase);
+            assertEquals("bbbbbbbb", engine.evaluate("${AAaa}${aaaa}", map, pMode));
+        }
+    }
+
+    @Test
+    public void jmak_identifyTemplates() { // for m_1
+        map.store("a", "b", pCase);
+        assertEquals("$a{a}", engine.evaluate("$a{a}", map, pMode));
+    }
+
 
     @Test
     // kill m0 and m7
