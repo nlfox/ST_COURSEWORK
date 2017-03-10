@@ -106,11 +106,64 @@ public class Task2_part2 {
     }
 
     @Test
+    // kill m0 and m7
     public void m_0() {
         map.store("firstname", "Adam", pCase);
         map.store("prefix", "first", pCase);
         assertEquals("}Adam", engine.evaluate("}${${prefix}name}", map, pMode));
     }
+
+    @Test
+    // kill m_1
+    public void m_1() {
+        map.store("name", "Adam", pCase);
+        assertEquals("$_{name}", engine.evaluate("$_{name}", map, pMode));
+    }
+
+
+    @Test
+    // kill m_2
+    public void m_2() {
+        map.store("firstname", "Adam", pCase);
+        assertEquals("$_{name}", engine.evaluate("$_{name}", map, pMode));
+    }
+
+
+    @Test
+    // kill m_5
+    public void m_5() {
+        map.store("Name", "Adam", false);
+        assertEquals("Adam", engine.evaluate("${name}", map, "keep-unmatched"));
+    }
+
+    @Test
+    // kill m_6
+    public void m_6() {
+        map.store("name", "Adam", false);
+        assertEquals("Adam", engine.evaluate("${Name}", map, "keep-unmatched"));
+    }
+
+    @Test
+    // kill m_7 and 8
+    public void m_7() {
+        map.store("s1", "1", false);
+        map.store("s2","2",false);
+        map.store("s3","3",false);
+        map.store("1_1_2","test",false);
+        assertEquals("test", engine.evaluate("${${s${s1}}_${s1}_${s2}}", map, "keep-unmatched"));
+    }
+
+    // kill m_9
+    @Test
+    public void m_9() {
+        map.store("s1", "1", pCase);
+        map.store("s2","2",pCase);
+        map.store("s3","3",pCase);
+        map.store("1__1_2","test",pCase);
+        map.store("s1111","test",pCase);
+        assertEquals("${test_${s111}_1_2}", engine.evaluate("${${s1111}_${s111}_${s1}_${s2}}", map, "keep-unmatched"));
+    }
+
 
 
 
