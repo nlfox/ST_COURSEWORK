@@ -1,3 +1,4 @@
+package st;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -7,15 +8,17 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import static org.junit.Assert.*;
 import st.EntryMap;
 import st.TemplateEngine;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-
+/**
+ * Created by nlfox on 2/19/17.
+ */
 @RunWith(Parameterized.class)
-public class Task2_part2 {
+public class Task2_part1 {
     EntryMap map;
     TemplateEngine engine;
 
@@ -47,18 +50,27 @@ public class Task2_part2 {
 
 
     //spec1 - Template cannot be NULL or empty. A runtime exception is thrown otherwise.
-    @Test
-    public void testEntryMapSpec1() {
-        exception.expect(RuntimeException.class);
-        map.store(null, "a", pCase);
-    }
+//    @Test
+//    public void testEntryMapSpec1() {
+//        try{
+//        	map.store(null, "a", pCase);
+//        }catch(RuntimeException e){
+//        	assertTrue(true);
+//        }
+//        assertTrue(false);
+//    }
 
     //spec2 - Replace value string cannot be NULL. A runtime exception is thrown otherwise.
-    @Test
-    public void testEntryMapSpec2() {
-        exception.expect(RuntimeException.class);
-        map.store("test", null, pCase);
-    }
+//    @Test
+//    public void testEntryMapSpec2() {
+//        try{
+//        	map.store("test", null, pCase);
+//        }catch(RuntimeException e){
+//        	assertTrue(true);
+//        }
+//        assertTrue(false);
+//        
+//    }
 
 
     //spec3 - Case sensitive flag is optional and can be NULL. In the case of NULL case sensitive flag, template matching will be case insensitive.
@@ -114,7 +126,7 @@ public class Task2_part2 {
     @Test
     public void testTemplateEngineSpec2() {
         assertEquals("", engine.evaluate("", null, pMode));
-        assertEquals("test2333${x}", engine.evaluate("test2333${x}", map, pMode));
+        assertEquals("test2333${x}", engine.evaluate("test2333${x}", null, pMode));
 
     }
 
@@ -205,27 +217,21 @@ public class Task2_part2 {
         will not first delete the unmatched one while in the other the "${${aaa}}" will be
         replaced by "test"
         */
-        System.out.println(pMode);
-        try{
-            if (pMode.equals("delete-unmatched")) {
-                assertEquals("", engine.evaluate("${${aaa}}", map, pMode));
-            } else {
-                assertEquals("test", engine.evaluate("${${aaa}}", map, pMode));
-            }
 
-            // now we add "aaa", things changed, aaa get first evaluated.
-            map.store("aaa", "aaa", pCase);
-
-            if (pMode.equals("delete-unmatched")) {
-                assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
-            } else {
-                assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
-            }
-        }catch(Exception e){
-            e.printStackTrace();
+        if (pMode.equals("delete-unmatched")) {
+            assertEquals("", engine.evaluate("${${aaa}}", map, pMode));
+        } else {
+            assertEquals("test", engine.evaluate("${${aaa}}", map, pMode));
         }
 
+        // now we add "aaa", things changed, aaa get first evaluated.
+        map.store("aaa", "aaa", pCase);
 
+        if (pMode.equals("delete-unmatched")) {
+            assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
+        } else {
+            assertEquals("aaa", engine.evaluate("${${aaa}}", map, pMode));
+        }
 
 
     }
@@ -291,12 +297,15 @@ public class Task2_part2 {
         assertEquals("test2333${x}", engine.evaluate("test2333${x}", null, pMode));
     }
 
-    @Test
-    public void additionalTest2(){
-        exception.expect(RuntimeException.class);
-        map.store("","s",pCase);
-        //assertEquals("test2333${x}", engine.evaluate("test2333${x}", map, pMode));
-    }
+//    @Test
+//    public void additionalTest2(){
+//        try{
+//        	map.store("","s",pCase);
+//        }catch(RuntimeException e){
+//        	assertTrue(true);
+//        }
+//        assertTrue(false);
+//    }
 
     @Test
     public void additionalTest3(){
@@ -308,10 +317,10 @@ public class Task2_part2 {
         assertEquals("test2333", engine.evaluate("test2333${}", map, "delete-unmatched"));
     }
 
-    @Test
-    public void additionalTest5(){
-        assertEquals("test2333", engine.evaluate("test2333${}", map, "keep-unmatched"));
-    }
+//    @Test
+//    public void additionalTest5(){
+//        assertEquals("test2333", engine.evaluate("test2333${}", map, "keep-unmatched"));
+//    }
 
     @Test
     public void additionalTest6(){
@@ -321,6 +330,62 @@ public class Task2_part2 {
     public void additionalTest7(){
         String s = "test";
         map.store(s,s,null);
+    }
+    @Test
+    public void jmak_test1(){
+    	try{
+    		map.store(null,"a",pCase);
+    	}catch(RuntimeException e){
+    		assertTrue(true);
+    		return;
+    	}catch(Exception e){
+    		assertTrue(false);
+    		return;
+    	}
+    	assertTrue(false);
+    }
+    @Test
+    public void jmak_test2(){
+    	try{
+    		map.store("","a",pCase);
+    	}catch(RuntimeException e){
+    		assertTrue(true);
+    		return;
+    	}catch(Exception e){
+    		assertTrue(false);
+    		return;
+    	}
+    	assertTrue(false);
+    }
+    @Test
+    public void jmak_test3(){
+    	try{
+    		map.store("a",null,pCase);
+    	}catch(RuntimeException e){
+    		assertTrue(true);
+    		return;
+    	}catch(Exception e){
+    		assertTrue(false);
+    		return;
+    	}
+    	assertTrue(false);
+    }
+    @Test
+    public void jmak_test4(){
+    	try{
+    		map.store("a","",pCase);
+    	}catch(RuntimeException e){
+    		assertTrue(false);
+    		return;
+    	}catch(Exception e){
+    		assertTrue(false);
+    		return;
+    	}
+    	assertTrue(true);
+    }
+    @Test
+    public void jmak_data1(){
+    	
     }
     
 }
