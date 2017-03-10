@@ -175,6 +175,12 @@ public class Task22 {
             assertEquals("bbbbbbbb", engine.evaluate("${AAaa}${aaaa}", map, pMode));
         }
     }
+    @Test
+    public void jmak_entryMap2(){ // for m_4
+    	map.store("a", "b", pCase);
+    	map.store("a", "b", !pCase);
+    	assertEquals(2,map.getEntries().size());
+    }
 
     @Test
     public void jmak_identifyTemplates() { // for m_1
