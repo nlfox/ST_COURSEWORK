@@ -2,6 +2,7 @@ package st;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Stack;
 
 public class TemplateEngine {
@@ -12,6 +13,7 @@ public class TemplateEngine {
 
     private static final String MM_KEEP = "keep-unmatched";
     private static final String MM_DELETE = "delete-unmatched";
+    private static final String MM_OPT = "optimization";
 
     public TemplateEngine(){
 
@@ -29,8 +31,22 @@ public class TemplateEngine {
 
         ArrayList<Template> sortedTemplates = sortTemplates(templates);
 
-        Result result = instantiate(templateString, sortedTemplates, entryMap.getEntries(), matchingMode);
 
+        Result result;
+        if (matchingMode.equals(MM_OPT)){
+
+            Result result_1 = instantiate(templateString, sortTemplates(identifyTemplates(templateString)),entryMap.getEntries(),MM_DELETE);
+            Result result_2 = instantiate(templateString, sortTemplates(identifyTemplates(templateString)),entryMap.getEntries(),MM_KEEP);
+            if (result_1.getTemplatesReplaced() > result_2.getTemplatesReplaced()){
+                result = result_1;
+            }else if (Objects.equals(result_1.getTemplatesReplaced(), result_2.getTemplatesReplaced())){
+                result = result_2;
+            }else {
+                result = result_2;
+            }
+        }else {
+            result = instantiate(templateString, sortedTemplates, entryMap.getEntries(), matchingMode);
+        }
         return result.getInstancedString();
     }
 
@@ -55,6 +71,9 @@ public class TemplateEngine {
             return Boolean.TRUE;
         }
         if (matchingMode.equals(MM_DELETE)){
+            return Boolean.TRUE;
+        }
+        if (matchingMode.equals(MM_OPT)){
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
