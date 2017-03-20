@@ -1,0 +1,5 @@
+Maximum branch coverage without package-specific constructor/method invokations.
+
+EntryMap: 26/30
+
+TemplateEngine: 72/94
